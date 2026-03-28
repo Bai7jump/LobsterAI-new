@@ -1,0 +1,133 @@
+{
+  "testEnvironment": {
+    "name": "OpenClaw Team Mode Integration Test Environment",
+    "version": "1.0.0",
+    "cleanUserDataBeforeRun": true,
+    "autoStartAllInstances": true
+  },
+  "instancePool": [
+    {
+      "name": "General Instance 1",
+      "type": "general",
+      "capabilities": ["coding", "analysis"],
+      "config": {
+        "maxConcurrentTasks": 2,
+        "memoryLimitMB": 1024,
+        "cpuLimit": 1.0
+      }
+    },
+    {
+      "name": "General Instance 2",
+      "type": "general",
+      "capabilities": ["coding", "analysis"],
+      "config": {
+        "maxConcurrentTasks": 2,
+        "memoryLimitMB": 1024,
+        "cpuLimit": 1.0
+      }
+    },
+    {
+      "name": "Python Specialist",
+      "type": "specialized",
+      "capabilities": ["coding", "python", "testing"],
+      "config": {
+        "maxConcurrentTasks": 1,
+        "memoryLimitMB": 2048,
+        "cpuLimit": 2.0
+      }
+    },
+    {
+      "name": "Data Analyst",
+      "type": "specialized",
+      "capabilities": ["analysis", "reporting", "visualization"],
+      "config": {
+        "maxConcurrentTasks": 1,
+        "memoryLimitMB": 1536,
+        "cpuLimit": 1.5
+      }
+    }
+  ],
+  "teamConfig": {
+    "enabled": true,
+    "schedulingStrategy": "round-robin",
+    "autoRestart": true,
+    "defaultInstanceConfig": {
+      "maxConcurrentTasks": 2
+    }
+  },
+  "testData": {
+    "testTasks": [
+      {
+        "name": "Simple coding task",
+        "input": {
+          "priority": 0,
+          "capabilities": ["coding"],
+          "payload": {
+            "kind": "agentTurn",
+            "message": "Write a JavaScript function to reverse a string",
+            "timeoutSeconds": 30
+          }
+        }
+      },
+      {
+        "name": "Python task",
+        "input": {
+          "priority": 1,
+          "capabilities": ["coding", "python"],
+          "payload": {
+            "kind": "agentTurn",
+            "message": "Write a Python function to calculate factorial",
+            "timeoutSeconds": 30
+          }
+        }
+      },
+      {
+        "name": "Analysis task",
+        "input": {
+          "priority": 0,
+          "capabilities": ["analysis"],
+          "payload": {
+            "kind": "agentTurn",
+            "message": "Analyze these performance metrics: [100ms, 200ms, 150ms, 300ms, 120ms]. Provide average, median, and p95 values.",
+            "timeoutSeconds": 60
+          }
+        }
+      }
+    ],
+    "testScheduledTasks": [
+      {
+        "name": "Hourly system check",
+        "schedule": {
+          "kind": "every",
+          "everyMs": 3600000
+        },
+        "payload": {
+          "kind": "agentTurn",
+          "message": "Perform system health check",
+          "timeoutSeconds": 60
+        },
+        "openclawTeam": {
+          "assignmentStrategy": "least-loaded"
+        }
+      },
+      {
+        "name": "Daily Python report generation",
+        "schedule": {
+          "kind": "cron",
+          "expr": "0 9 * * *"
+        },
+        "payload": {
+          "kind": "agentTurn",
+          "message": "Generate daily development report",
+          "timeoutSeconds": 300
+        },
+        "openclawTeam": {
+          "assignmentStrategy": "capability-based",
+          "capabilityRequirements": {
+            "skills": ["python", "reporting"]
+          }
+        }
+      }
+    ]
+  }
+}
